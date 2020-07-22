@@ -1,25 +1,59 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import "./App.css";
 
 function App() {
+  const [text, setText] = useState("");
+  const [textColor, setTextColor] = useState("black");
+  const [hasError, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [checked, setChecked] = useState(true);
+
+  function fetchData() {
+    setLoading(true);
+    fetch("https://www.colr.org/json/color/latest")
+      .then((response) => response.json())
+      .then((data) => {
+        setLoading(false);
+        setTextColor(data);
+      })
+      .catch((e) => {
+        setLoading(false);
+        setError("fetch failed");
+      });
+  }
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  function toggleChange() {
+    setChecked(!checked);
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div className="container" style={{ color: textColor }}>
+        <input
+          type="text"
+          className="textbox"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Enter text..."
+        />
+        {checked ? <span className="text">{text}</span> : ""}
+        <div className="button-container">
+          <button className="button" onClick={fetchData} disabled={loading}>
+            {loading ? "loading" : "Change Color!"}
+          </button>
+        </div>
+        <div className="checkbox">
+          <label className="label">
+            <input type="checkbox" checked={checked} onChange={toggleChange} />
+            Check!
+          </label>
+        </div>
+      </div>
+    </>
   );
 }
 
