@@ -10,11 +10,12 @@ function App() {
 
   function fetchData() {
     setLoading(true);
-    fetch("https://www.colr.org/json/color/latest")
+    fetch("http://www.colr.org/json/color/random")
       .then((response) => response.json())
       .then((data) => {
         setLoading(false);
-        setTextColor(data);
+        setTextColor(`#${data.colors[0].hex}`);
+        console.log(data);
       })
       .catch((e) => {
         setLoading(false);
@@ -43,13 +44,13 @@ function App() {
         {checked ? <span className="text">{text}</span> : ""}
         <div className="button-container">
           <button className="button" onClick={fetchData} disabled={loading}>
-            {loading ? "loading" : "Change Color!"}
+            {loading ? "loading..." : "Change Color!"}
           </button>
         </div>
         <div className="checkbox">
           <label className="label">
             <input type="checkbox" checked={checked} onChange={toggleChange} />
-            Check!
+            {checked ? "Hide Text" : "Show Text"}
           </label>
         </div>
       </div>
